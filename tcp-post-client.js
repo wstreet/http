@@ -77,13 +77,15 @@ class XMLHttpRequest {
     this.headers[key] = value
   }
 
-  send() {
+  send(body) {
     const rows = []
     rows.push(`${this.method} ${this.url} HTTP/1.1`)
 
+    this.headers['Content-Length'] = Buffer.byteLength(body)
+    
     const restRows = Object.entries(this.headers).map(([key, value]) => `${key}: ${value}`)
     rows.push(...restRows)
-    const request = rows.join('\r\n') + '\r\n\r\n'
+    const request = rows.join('\r\n') + '\r\n\r\n' + body
     console.log(request);
     this.socket.write(request)
   }
@@ -94,10 +96,10 @@ const xhr = new XMLHttpRequest()
 xhr.onreadystatechange = ()=> {
   console.log('onreadystatechange', xhr.readyState)
 }
-xhr.open('GET', 'http://127.0.0.1:8080/get')
+xhr.open('POST', 'http://127.0.0.1:8080/post')
 
+xhr.setRequestHeader('Content-type', 'application/json')
 xhr.responseType = 'text'
-// xhr.setRequestHeader('name', 'wstreet')
-// xhr.setRequestHeader('age', '18')
 
-xhr.send()
+xhr.send(JSON.stringify({name: 'wstreet7', age: 18}))
+

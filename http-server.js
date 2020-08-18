@@ -6,7 +6,7 @@ const path = require('path')
 
 const server = http.createServer((req, res) => {
   const { pathname } = url.parse(req.url)
-  if(pathname === '/get.html') {
+  if(['/get.html', '/post.html'].includes(pathname)) {
     res.statusCode = 200
     res.setHeader('name', 'wstreet')
     res.setHeader('age', '25')
@@ -20,6 +20,31 @@ const server = http.createServer((req, res) => {
     res.statusCode = 200
     res.setHeader('Content-type', 'text/html')
     res.end('get')
+  } else if(pathname === '/post') {
+
+    let buffers = []
+    // tcp传输的时候有可能会分包
+    req.on('data', data => {
+      buffers.push(data)
+    })
+
+    req.on('end', data => {
+      console.log(req.method);
+      console.log(req.url);
+      console.log(req.headers);
+
+      res.statusCode = 200
+      let body = Buffer.concat(buffers)
+      console.log('body', body)
+
+      res.setHeader('Content-type', 'text/plain')
+      res.write(body)
+      res.end()
+    })
+
+
+
+
   } else {
     res.statusCode = 404
     res.end()

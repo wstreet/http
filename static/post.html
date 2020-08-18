@@ -7,16 +7,20 @@
 </head>
 <body>
   <div>
-    get html
+    post html
   </div>
   <script>
     const xhr = new XMLHttpRequest()
     xhr.onreadystatechange = ()=> {
       console.log(xhr.readyState)
     }
+    
+    xhr.open('POST', 'http://127.0.0.1:8080/post')
+
+    xhr.setRequestHeader('Content-type', 'application/json')
     xhr.responseType = 'text'
-    xhr.open('GET', '/get')
-    xhr.send()
+    
+    xhr.send(JSON.stringify({name: 'wstreet7', age: 18}))
   </script>
 </body>
 </html>
